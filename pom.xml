@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.marcelkliemannel.dev</groupId>
+    <artifactId>java-ntlmv2-authentication-example</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Java NTLMv2 authentication example</name>
+    <url>http://github.com/marcelkliemannel/java-ntlmv2-authentication-example</url>
+
+    <properties>
+        <!-- http://central.maven.org/maven2/org/eclipse/jetty/jetty-maven-plugin/ -->
+        <jettyVersion>9.3.9.v20160517</jettyVersion>
+        <!-- https://mvnrepository.com/artifact/ch.poweredge.ntlmv2-auth/ntlmv2-lib -->
+        <ntlmv2LibVersion>1.0.5</ntlmv2LibVersion>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+        <mavenCompilerPluginVersion>3.5.1</mavenCompilerPluginVersion>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
+        <slf4jNopVersion>1.7.21</slf4jNopVersion>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mavenCompilerPluginVersion}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- This is the only dependency you need for the ntlmv2 workflow. -->
+        <dependency>
+            <groupId>ch.poweredge.ntlmv2-auth</groupId>
+            <artifactId>ntlmv2-lib</artifactId>
+            <version>${ntlmv2LibVersion}</version>
+        </dependency>
+
+        <!-- The dependency 'ntlmv2-lib' depends on 'slf4j-api' which gives a warning, if no logger from
+             the maven group 'org.slf4j' is in class path. Use this dependency to suppress the warning.
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>${slf4jNopVersion}</version>
+        </dependency> -->
+
+        <!-- Using jetty for server/client communication. -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jettyVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-client</artifactId>
+            <version>${jettyVersion}</version>
+        </dependency>
+    </dependencies>
+</project>
