@@ -6,7 +6,7 @@ import jcifs.smb.NtlmPasswordAuthentication;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.StringContentProvider;
+import org.eclipse.jetty.http.HttpHeader;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -70,8 +70,10 @@ class NTLMv2ClientSideHandler {
 
         // Send type 1 message to server -> receive type 2 message with challenge.
         ContentResponse type2MessageContentResponse = makeServerRequest(type1Message.toByteArray());
-        String respondedContent = type2MessageContentResponse.getContentAsString().substring(5); // Remove "NTLM " prefix
-        byte[] type2Message = Base64.getDecoder().decode(respondedContent);
+
+        String wwwAuthenticateHeader = type2MessageContentResponse.getHeaders().getValues(HttpHeader.WWW_AUTHENTICATE.name()).nextElement();
+        String rawType2Message = wwwAuthenticateHeader.substring(5); // Remove the "NTLM " prefix
+        byte[] type2Message = Base64.getDecoder().decode(rawType2Message);
 
         // Generate type 3 message.
         byte[] type3Message = ntlmContext.initSecContext(type2Message, 0, 0);
@@ -90,10 +92,9 @@ class NTLMv2ClientSideHandler {
         // The server side needs the username in every NTLMv2 message
         request.header("X-Username", ntlmPasswordAuthentication.getUsername());
 
-        // Better: Use the 'Authorization' HTTP header field (see notice above).
         // Always encode ntlmv2 messages via base64 before converting to string!
         String authorizationHeader = "NTLM " + new String(Base64.getEncoder().encode(ntlmv2Message));
-        request.content(new StringContentProvider(authorizationHeader, "UTF-8"));
+        request.header(HttpHeader.AUTHORIZATION, authorizationHeader);
 
         return request.send();
     }

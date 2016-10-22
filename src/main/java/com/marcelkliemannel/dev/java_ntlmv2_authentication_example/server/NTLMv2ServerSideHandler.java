@@ -1,5 +1,6 @@
 package com.marcelkliemannel.dev.java_ntlmv2_authentication_example.server;
 
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.ntlmv2.liferay.NtlmLogonException;
@@ -22,12 +23,11 @@ import java.util.Map;
  * - This example is just for showing the workflow of the NTLMv2 authentication. Therefore
  * things like error handling, content validation or synchronisation of variables are ignored.
  *
- * - In a normal workflow the NTLMv2 massages are transported by the HTTP header fields
- * 'Authorization' (from client) or 'WWW-Authenticate' (from server) and the HTTP status
- * code '401 - Unauthorized'. Unfortunately if the 'jetty' library recognise such header
- * fields or status codes her own authentication handler jumps in but fails to parse
- * the NTLMv2 header fields. Therefore the communication in this example is done over
- * the HTTP content and status code '200 - OK'.
+ * - According to the NTLMv2 specification the HTTP status code '401 - Unauthorized' should be
+ * used during the client/server communication. Unfortunately if the 'jetty' library recognise
+ * this status code her own authentication handler jumps in, but fails to parse the 'NTLM ' prefix
+ * in the 'Authorization'/'WWW-Authenticate' header fields. Therefore the communication in this
+ * example is always done over status code '200 - OK'.
  *
  * @author Marcel Kliemannel &lt;dev@marcelkliemannel.com&gt;
  */
@@ -69,8 +69,9 @@ class NTLMv2ServerSideHandler extends AbstractHandler {
         String usernameHeader = request.getHeader("X-Username");
 
         // Better: Use the 'Authorization' HTTP header field (see notice above).
-        String authorizationHeader = httpServletRequest.getReader().readLine().substring(5);
-        byte[] ntlmv2Message = Base64.getDecoder().decode(authorizationHeader);
+        String authorizationHeader = httpServletRequest.getHeader(HttpHeader.AUTHORIZATION.name());
+        String rawNTLMv2Message    = authorizationHeader.substring(5); // Remove the "NTLM " prefix
+        byte[] ntlmv2Message       = Base64.getDecoder().decode(rawNTLMv2Message);
 
         // The entry at position 8 is the type indicator.
         switch (ntlmv2Message[8]) {
@@ -84,10 +85,9 @@ class NTLMv2ServerSideHandler extends AbstractHandler {
                 // Generate a type 2 message
                 byte[] type2Message = ntlmManager.negotiate(ntlmv2Message, challenge);
 
-                // Better: Use the 'WWW-Authenticate' HTTP header field (see notice above).
                 // Always encode ntlmv2 messages via base64 before converting to string!
                 String wwwAuthenticateHeader = "NTLM " + new String(Base64.getEncoder().encode(type2Message));
-                httpServletResponse.getWriter().append(wwwAuthenticateHeader);
+                httpServletResponse.setHeader(HttpHeader.WWW_AUTHENTICATE.name(), wwwAuthenticateHeader);
 
                 request.setHandled(true);
 
@@ -100,7 +100,6 @@ class NTLMv2ServerSideHandler extends AbstractHandler {
                     ntlmManager.authenticate(ntlmv2Message, usernameChallenges.get(usernameHeader));
 
                     // The client has successfully authorized!
-
                     httpServletResponse.getWriter().append("Authenticated!");
                 }
                 catch (IOException | NoSuchAlgorithmException | NtlmLogonException e) {
