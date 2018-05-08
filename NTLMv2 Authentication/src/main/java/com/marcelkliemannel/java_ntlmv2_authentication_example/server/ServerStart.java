@@ -1,11 +1,9 @@
-package com.marcelkliemannel.dev.java_ntlmv2_authentication_example.server;
+package com.marcelkliemannel.java_ntlmv2_authentication_example.server;
 
 import org.eclipse.jetty.server.Server;
 
 /**
  * Minimal server instance for handling a NTLMv2 authentication request.
- *
- * @author Marcel Kliemannel &lt;dev@marcelkliemannel.com&gt;
  */
 public class ServerStart {
     // ---- Class Variables

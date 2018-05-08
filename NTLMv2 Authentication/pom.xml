@@ -7,8 +7,8 @@
     <groupId>com.marcelkliemannel.dev</groupId>
     <artifactId>java-ntlmv2-authentication-example</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Java NTLMv2 authentication example</name>
-    <url>http://github.com/marcelkliemannel/java-ntlmv2-authentication-example</url>
+    <name>Java Client/Server NTLMv2 Authentication Example</name>
+    <url>http://github.com/marcelkliemannel/java-examples</url>
 
     <properties>
         <!-- http://central.maven.org/maven2/org/eclipse/jetty/jetty-maven-plugin/ -->

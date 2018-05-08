@@ -1,12 +1,10 @@
-package com.marcelkliemannel.dev.java_ntlmv2_authentication_example.client;
+package com.marcelkliemannel.java_ntlmv2_authentication_example.client;
 
 
 import org.eclipse.jetty.client.HttpClient;
 
 /**
  * Minimal client instance to make a NTLMv2 authentication request.
- *
- * @author Marcel Kliemannel &lt;dev@marcelkliemannel.com&gt;
  */
 public class ClientStart {
     // ---- Class Variables

@@ -1,4 +1,4 @@
-package com.marcelkliemannel.dev.java_ntlmv2_authentication_example.server;
+package com.marcelkliemannel.java_ntlmv2_authentication_example.server;
 
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
@@ -28,8 +28,6 @@ import java.util.Map;
  * this status code her own authentication handler jumps in, but fails to parse the 'NTLM ' prefix
  * in the 'Authorization'/'WWW-Authenticate' header fields. Therefore the communication in this
  * example is always done over status code '200 - OK'.
- *
- * @author Marcel Kliemannel &lt;dev@marcelkliemannel.com&gt;
  */
 class NTLMv2ServerSideHandler extends AbstractHandler {
     // ---- Class Variables
