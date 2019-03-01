@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.marcelkliemannel.dev</groupId>
+  <groupId>dev.turingcomplete</groupId>
   <artifactId>java-ntlmv2-authentication-example</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>Java Client/Server NTLMv2 Authentication Example</name>
   <url>http://github.com/marcelkliemannel/java-examples</url>
 
   <properties>
     <!-- http://central.maven.org/maven2/org/eclipse/jetty/jetty-maven-plugin/ -->
-    <jettyVersion>9.3.9.v20160517</jettyVersion>
+    <jettyVersion>9.4.15.v20190215</jettyVersion>
     <!-- https://mvnrepository.com/artifact/ch.poweredge.ntlmv2-auth/ntlmv2-lib -->
     <ntlmv2LibVersion>1.0.5</ntlmv2LibVersion>
     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
@@ -51,7 +51,7 @@
         <version>${slf4jNopVersion}</version>
     </dependency> -->
 
-    <!-- Using jetty for server/client communication. -->
+    <!--Jjetty for server/client communication. -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
