@@ -27,4 +27,7 @@ build/
 out/
 
 # Intellij
-.idea
+.idea/
+
+# OS specific files
+.DS_Store
