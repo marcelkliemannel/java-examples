@@ -1,4 +1,4 @@
-package com.marcelkliemannel.java_ntlmv2_authentication_example.client;
+package dev.turingcomplete.java_ntlmv2_authentication_example.client;
 
 import jcifs.ntlmssp.Type1Message;
 import jcifs.smb.NtlmContext;
@@ -15,12 +15,11 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * This class handles the client side NTLMv2 authentication.
- * <p>
- * NOTICE:
- * - This example is just for showing the workflow of the NTLMv2 authentication. Therefore
- * things like error handling, content validation or synchronisation of variables are ignored.
- * <p>
- * - In a normal workflow the NTLMv2 massages are transported by the HTTP header fields
+ *
+ * NOTICE: This example is just for showing the workflow of the NTLMv2 authentication.
+ * Therefore, things like error handling, content validation or synchronisation are ignored.
+ *
+ * In a normal workflow the NTLMv2 massages are transported by the HTTP header fields
  * 'Authorization' (from client) or 'WWW-Authenticate' (from server) and the HTTP status
  * code '401 - Unauthorized'. Unfortunately if the 'jetty' library recognise such header
  * fields or status codes, her own authentication handler jumps in, but fails to parse
@@ -28,31 +27,27 @@ import java.util.concurrent.TimeoutException;
  * the HTTP content and status code '200 - OK'.
  */
 class NTLMv2ClientSideHandler {
-  // ---- Class Variables
+  // -- Fields ------------------------------------------------------------------------------- //
 
-  // Ip address of the example server
+  // IP address of the example server.
   private final static String SERVER = "http://localhost:8080";
   private final static String WORKSTATION = "MyWorkstation";
 
-  // Should be identically as on server side configuration
+  // Should be identically like the one on the server side configuration.
   private final static String DOMAIN = "COM";
   private final static String USERNAME = "user";
   private final static String PASSWORD = "1234";
 
-  // ---- Instance Variables
+  private final HttpClient                 httpClient;
+  private       NtlmPasswordAuthentication ntlmPasswordAuthentication;
 
-  private final HttpClient httpClient;
-
-  private NtlmPasswordAuthentication ntlmPasswordAuthentication;
-
-  // ---- Constructors
+  // -- Initialization ----------------------------------------------------------------------- //
 
   NTLMv2ClientSideHandler(HttpClient httpClient) {
     this.httpClient = httpClient;
   }
 
-  // ---- Public Methods
-  // ---- Package/Protected Methods
+  // -- Exposed Methods ---------------------------------------------------------------------- //
 
   void authenticate() throws IOException, InterruptedException, ExecutionException, TimeoutException {
     // The 'ntlmContext' instance can only be used once in an authentication process:
@@ -70,33 +65,36 @@ class NTLMv2ClientSideHandler {
     // Send type 1 message to server -> receive type 2 message with challenge.
     ContentResponse type2MessageContentResponse = makeServerRequest(type1Message.toByteArray());
 
-    String wwwAuthenticateHeader = type2MessageContentResponse.getHeaders().getValues(HttpHeader.WWW_AUTHENTICATE.name()).nextElement();
-    String rawType2Message = wwwAuthenticateHeader.substring(5); // Remove the "NTLM " prefix
+    String wwwAuthenticateHeader =
+            type2MessageContentResponse.getHeaders().getValues(HttpHeader.WWW_AUTHENTICATE.name()).nextElement();
+    String rawType2Message = wwwAuthenticateHeader.substring("NTLM ".length()); // Remove the "NTLM " prefix
     byte[] type2Message = Base64.getDecoder().decode(rawType2Message);
 
     // Generate type 3 message.
     byte[] type3Message = ntlmContext.initSecContext(type2Message, 0, 0);
 
-    // Better: Check HTTP status code (see notice above)
     // Send type 3 message -> get authentication result from server.
     String authenticationResult = makeServerRequest(type3Message).getContentAsString();
     System.out.println(authenticationResult);
   }
 
-  // ---- Private Methods
+  // -- Private Methods ---------------------------------------------------------------------- //
 
-  private ContentResponse makeServerRequest(byte[] ntlmv2Message) throws InterruptedException, ExecutionException, TimeoutException {
+  private ContentResponse makeServerRequest(byte[] ntlmv2Message) throws InterruptedException,
+                                                                         ExecutionException,
+                                                                         TimeoutException {
     Request request = httpClient.newRequest(SERVER);
 
-    // The server side needs the username in every NTLMv2 message
+    // The server side needs the username in every NTLMv2 message.
     request.header("X-Username", ntlmPasswordAuthentication.getUsername());
 
-    // Always encode ntlmv2 messages via base64 before converting to string!
+    // Always encode NTLMv2 messages via base64 before converting to string.
     String authorizationHeader = "NTLM " + new String(Base64.getEncoder().encode(ntlmv2Message));
     request.header(HttpHeader.AUTHORIZATION, authorizationHeader);
 
     return request.send();
   }
 
-  // ---- Inner Class
+  // -- Inner Type --------------------------------------------------------------------------- //
+  // -- End of Class ------------------------------------------------------------------------- //
 }
