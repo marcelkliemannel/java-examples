@@ -6,7 +6,7 @@ This repository is a collection of Java sample projects.
 
 ### Java Client/Server NTLMv2 Authentication Example
 
-Directory: __NTLMv2 Authentication__
+Directory: `ntlmv2-authentication`
 
 This is an example implentation of the NTLMv2 authentication protocol for the client and server side. The library [ntlmv2-auth](https://sourceforge.net/projects/ntlmv2auth) is used for the authentication, which is embedded in a rudimentary jetty server and client wrapper. This example is merely an illustration of the NTLMv2 authentication workflow. Therefore things like error handling, content validation or synchronisation are ignored.
 
